@@ -21,7 +21,7 @@ Process
 """ setup web.py stuff for db access """
 import web
 from web import utils
-import config
+#import config
 import os
 
 space_name = 'WebSeitzWiki'
@@ -182,11 +182,11 @@ def page_clean_links(page_contents, chapters_dict = chapters_dict()):
     return page_contents
     
 def page_add_twin(page_name, page_contents):
-	"""add link to online-twin (plus extra closing p) at bottom of every page"""
-	suffix = '</body>'
-	suffix_pos = page_contents.find(suffix)
-	line = '<p><a class="wikilog" href="%s%s">(Online version of page)</a><p>' % (wiki_root, page_name)
-	return page_contents[0:suffix_pos] + line + page_contents[suffix_pos:]
+    """add link to online-twin (plus extra closing p) at bottom of every page"""
+    suffix = '</body>'
+    suffix_pos = page_contents.find(suffix)
+    line = '<p><a class="wikilog" href="%s%s">(Online version of page)</a><p>' % (wiki_root, page_name)
+    return page_contents[0:suffix_pos] + line + page_contents[suffix_pos:]
 
 def page_clean(page_name, chapters_dict = chapters_dict()):
     """umbrella function to call multiple cleaning functions on a page"""
@@ -205,6 +205,16 @@ def pages_clean():
         print 'cleaning ', page_name
         page_clean(page_name)
         
+def pages_combine():
+    """Take all the local HTML files and combine into single giant file for use in TwitterBot """
+    page_combined = ""
+    for page_name in chapters_dict().keys():
+        page_path = os.path.join(our_path, ebook_directory, page_name + '.html')
+        page_contents = open(page_path, 'r').read()
+        page_combined = page_combined + page_contents + '\r\r'
+    page_path = os.path.join(our_path, ebook_directory, 'PrivateWikiNotebook.txt')
+    out_f = open(page_path, 'w')
+    out_f.write(page_combined)
         
 if __name__ == '__main__':
     #other_pages_list()
@@ -215,6 +225,4 @@ if __name__ == '__main__':
     #page_clean_headers('TellYourLifeStoryThroughVariousFilters')
     #page_clean('PickingAWikiForYourPrivateNotebook')
     #pages_clean()
-    
-    
-
+    pages_combine()
